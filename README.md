@@ -5,7 +5,7 @@
 
 ### Wakanda
 
-To make its **Server-Side JavaScript** as most standard and compatible with Client-Side JavaScript, [Wakanda](http://wakanda.org) has been mostly based on the native support of **CommonJS** and **HTML5 API on the server** like
+To make its **Server-Side JavaScript** as most standard and compatible with Client-Side JavaScript as possible, [Wakanda](http://wakanda.org) has been mostly based on the native support of **CommonJS** and **HTML5 API on the server** like
 
 * [W3C Blob](http://doc.wakanda.org/BLOB/BLOB.100-866245.en.html)
 * [W3C FileSystem](http://doc.wakanda.org/Files-and-Folders/Files-and-Folders.100-588941.en.html)
