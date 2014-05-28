@@ -71,23 +71,24 @@ This code be added to the **required.js** file at the [project](http://doc.wakan
 
 ### [index.js](./index.js)
 
-Add *[lib_node](./lib_node)* the `require()` paths so it can find the additionnal core node modules
+* Add *[lib_node](./lib_node)*  and *[lib](./lib)*  to the `require()` paths so it can find the additionnal core node modules
+* Load polyfils for `global` and `process`
 
 ### [binding](./binding)
 
-Polyfils written in JS of C node.js modules called from JavaScript via `process.binding(id)`
+* Polyfils written in JS of C node.js modules called from JavaScript via `process.binding(id)`
 
 ### [lib](./lib)
 
-Polyfil files to extend current Wakanda support of some node.js API
+* Polyfil files to extend current Wakanda support of some node.js API
 
 ### [lib_node](./lib_node)
 
-Contains conform copies of some **node.js JavaScript source files** from the [**"lib"**](https://github.com/joyent/node/tree/master/lib) folder of its [official github repository](https://github.com/joyent/node/) 
+* Contains conform copies of some **node.js JavaScript source files** from the [**"lib"**](https://github.com/joyent/node/tree/master/lib) folder of its [official github repository](https://github.com/joyent/node/) 
 
 ### [doc_node](./doc_node)
 
-Contains conform copies of some **node.js Markdown doc files** from the [**"doc/api"**](https://github.com/joyent/node/tree/master/doc/api) folder of its [official github repository](https://github.com/joyent/node/) 
+* Contains conform copies of some **node.js Markdown doc files** from the [**"doc/api"**](https://github.com/joyent/node/tree/master/doc/api) folder of its [official github repository](https://github.com/joyent/node/) 
 
 ## What next?
 
@@ -104,7 +105,8 @@ There is still few interestings things that could potentially be done in pure JS
 
 **Any contribution is welcome :-)**
 
-In the meantime, the Wakanda team will probably and more node.js API support too
+In the meantime, the Wakanda team will probably and more node.js API support too.
+It looks like the command line API is going to get better in Wakanda 9, potentially via more node.js `process` API support (`stdin`, `stdout`, `stderr`, and `env` ?)
 
 ## License
 
