@@ -65,6 +65,10 @@ This code be added to the **required.js** file at the [project](http://doc.wakan
 
 Add *[lib_node](./tree/lib_node)* the `require()` paths so it can find the additionnal core node modules
 
+### [lib](./master/tree/lib_node)
+
+Polyfil files to extend current Wakanda support of some node.js API
+
 ### [lib_node](./master/tree/lib_node)
 
 Contains conform copies of some **node.js JavaScript source files** from the [**"lib"**](https://github.com/joyent/node/tree/master/lib) folder of its [official github repository](https://github.com/joyent/node/) 
