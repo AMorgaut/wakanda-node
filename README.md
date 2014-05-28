@@ -76,7 +76,7 @@ This code be added to the **required.js** file at the [project](http://doc.wakan
 
 ### [binding](./binding)
 
-* Polyfils written in JS of C node.js modules called from JavaScript via `process.binding(id)`
+* Polyfils written in JS of [C node.js modules](https://github.com/joyent/node/tree/master/src) called from JavaScript via `process.binding(id)`
 
 ### [lib](./lib)
 
