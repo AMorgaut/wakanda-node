@@ -69,23 +69,23 @@ This code be added to the **required.js** file at the [project](http://doc.wakan
 
 ## Architecture
 
-### [index.js](./blob/master/index.js)
+### [index.js](./index.js)
 
-Add *[lib_node](./tree/lib_node)* the `require()` paths so it can find the additionnal core node modules
+Add *[lib_node](./lib_node)* the `require()` paths so it can find the additionnal core node modules
 
-### [binding](./master/tree/binding)
+### [binding](./binding)
 
 Polyfils written in JS of C node.js modules called from JavaScript via `process.binding(id)`
 
-### [lib](./master/tree/lib)
+### [lib](./lib)
 
 Polyfil files to extend current Wakanda support of some node.js API
 
-### [lib_node](./master/tree/lib_node)
+### [lib_node](./lib_node)
 
 Contains conform copies of some **node.js JavaScript source files** from the [**"lib"**](https://github.com/joyent/node/tree/master/lib) folder of its [official github repository](https://github.com/joyent/node/) 
 
-### [doc_node](./master/tree/doc_node)
+### [doc_node](./doc_node)
 
 Contains conform copies of some **node.js Markdown doc files** from the [**"doc/api"**](https://github.com/joyent/node/tree/master/doc/api) folder of its [official github repository](https://github.com/joyent/node/) 
 
