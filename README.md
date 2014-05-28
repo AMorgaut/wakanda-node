@@ -21,6 +21,7 @@ but it still already support some **node.js API** including:
 * [Crypto](http://doc.wakanda.org/Crypto/Crypto.100-1052580.en.html) (partial)
 * [Events](http://doc.wakanda.org/Events/Events.100-967582.en.html)
 * [Net](http://doc.wakanda.org/Net/Net.100-967781.en.html)
+* [Process](http://doc.wakanda.org/Global-Application/Application/process.303-933138.en.html) (partial & partial documentation)
 * [TLS](http://doc.wakanda.org/TLS-SSL/TLS-SSL.100-967962.en.html) (partial)
 
 ### wakanda-node
