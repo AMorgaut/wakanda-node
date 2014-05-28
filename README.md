@@ -40,6 +40,7 @@ This version of the package add the following API:
 * [Globals](http://nodejs.org/api/globals.html) (partial) ([local node doc](./doc_node/globals.markdown))
 	* **`global`**: ([node doc](http://nodejs.org/api/globals.html#globals_global) | [local node doc](./doc_node/globals.markdown#global))
 * **[Os](http://nodejs.org/api/os.html)** (miss `os.cpus()`, `os.freemem()`, `os.tmbdir()`, `os.uptime()`) ([local node doc](./doc_node/os.markdown))
+	* works on MacOS, potentially Linux, not yet Windows
 * **[Punycode](http://nodejs.org/api/punycode.html):** used via `require('punnycode')` ([local node doc](./doc_node/punycode.markdown))
 * [Process](http://nodejs.org/api/process.html) (partial) ([local node doc](./doc_node/process.markdown))
 	* **`process.platform`**
@@ -96,12 +97,16 @@ In a perfect world such package would make wakanda 100% node.js compliant as per
 
 There is still few interestings things that could potentially be done in pure JS in this package
 
-* integration of [Stream](http://nodejs.org/api/stream.html) (`stream`) (in progress)
+* integration of [Path](http://nodejs.org/api/path.html), [String Decoder](http://nodejs.org/api/string_decoder.html), [Stream](http://nodejs.org/api/stream.html) (in progress)
+* a patch on `require()` to support `nodes_modules` folders
 * a [File System](http://nodejs.org/api/fs.html) (`fs`) polyfil via the Wakanda/W3C Filesystem API 
 	* -> may also work client-side
 * a [Child Processes](http://nodejs.org/api/child_process.html) (`child_process`) polyfil via the Wakanda/W3C Web Worker API
 	* -> may also work client-side
 * few more...
+
+Might be interesting to see if [emscripten](https://github.com/kripken/emscripten) could convert some of the node.js C modules into some working JS ones, but I must confess I don't put much hope in that (worth at least a try for fun).
+
 
 **Any contribution is welcome :-)**
 
