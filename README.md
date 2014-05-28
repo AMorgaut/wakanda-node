@@ -16,7 +16,7 @@ To make its **Server-Side JavaScript** as most standard and compatible with Clie
 
 but it still already support some **node.js API** including:
 
-* [Assert](http://doc.wakanda.org/Unit-Testing/Unit-Testing.100-1019075.en.html)
+* [Assertion Testing](http://doc.wakanda.org/Unit-Testing/Unit-Testing.100-1019075.en.html)
 * [Buffer](http://doc.wakanda.org/Buffer/Buffer.100-805374.en.html)
 * [Crypto](http://doc.wakanda.org/Crypto/Crypto.100-1052580.en.html) (partial)
 * [Events](http://doc.wakanda.org/Events/Events.100-967582.en.html)
@@ -88,6 +88,23 @@ Contains conform copies of some **node.js JavaScript source files** from the [**
 ### [doc_node](./doc_node)
 
 Contains conform copies of some **node.js Markdown doc files** from the [**"doc/api"**](https://github.com/joyent/node/tree/master/doc/api) folder of its [official github repository](https://github.com/joyent/node/) 
+
+## What next?
+
+In a perfect world such package would make wakanda 100% node.js compliant as perfect  polyfill. Unfortunatly few things can not be done that easily like `__filename`and `__dirname` (I'd recommend modules authors to use `module.filename` instead).
+
+There is still few interestings things that could potentially be done in pure JS in this package
+
+* integration of [Stream](http://nodejs.org/api/stream.html) (`stream`) (in progress)
+* a [File System](http://nodejs.org/api/fs.html) (`fs`) polyfil via the Wakanda/W3C Filesystem API 
+	* -> may also work client-side
+* a [Child Processes](http://nodejs.org/api/child_process.html) (`child_process`) polyfil via the Wakanda/W3C Web Worker API
+	* -> may also work client-side
+* few more...
+
+**Any contribution is welcome :-)**
+
+In the meantime, the Wakanda team will probably and more node.js API support too
 
 ## License
 
