@@ -37,10 +37,18 @@ Current wakanda-node version is based on node.js version 0.11.13
 
 This version of the package add the following API:
 
-* **[Punycode](http://nodejs.org/api/punycode.html):** used via `require('punnycode')` ([local doc](./doc_node/punycode.markdown))
-* **[Query Strings](http://nodejs.org/api/querystring.html):** used via `require('querystring')`([local doc](./doc_node/querystring.markdown))
-* **[Url](http://nodejs.org/api/url.html):** used via `require('url')`([local doc](./doc_node/url.markdown))
-* **[Utilities](http://nodejs.org/api/util.html):** used via `require('util')`([local doc](./doc_node/util.markdown))
+* [Globals](http://nodejs.org/api/globals.html) (partial) ([local node doc](./doc_node/globals.markdown))
+	* **`global`**: ([node doc](http://nodejs.org/api/globals.html#globals_global) | [local node doc](./doc_node/globals.markdown#global))
+* **[Os](http://nodejs.org/api/os.html)** (miss `os.cpus()`, `os.freemem()`, `os.tmbdir()`, `os.uptime()`) ([local node doc](./doc_node/os.markdown))
+* **[Punycode](http://nodejs.org/api/punycode.html):** used via `require('punnycode')` ([local node doc](./doc_node/punycode.markdown))
+* [Process](http://nodejs.org/api/process.html) (partial) ([local node doc](./doc_node/process.markdown))
+	* **`process.platform`**
+	* **`process.env`** (empty, still useful as is to prevent exceptions)
+	* **`process.versions`** (almost empty)
+	* **`process.binding`** (internal)
+* **[Query Strings](http://nodejs.org/api/querystring.html):** used via `require('querystring')`([local node doc](./doc_node/querystring.markdown))
+* **[Url](http://nodejs.org/api/url.html):** used via `require('url')`([local node doc](./doc_node/url.markdown))
+* **[Utilities](http://nodejs.org/api/util.html):** used via `require('util')`([local node doc](./doc_node/util.markdown))
 
 ## How to use
 
@@ -65,7 +73,11 @@ This code be added to the **required.js** file at the [project](http://doc.wakan
 
 Add *[lib_node](./tree/lib_node)* the `require()` paths so it can find the additionnal core node modules
 
-### [lib](./master/tree/lib_node)
+### [binding](./master/tree/binding)
+
+Polyfils written in JS of C node.js modules called from JavaScript via `process.binding(id)`
+
+### [lib](./master/tree/lib)
 
 Polyfil files to extend current Wakanda support of some node.js API
 
