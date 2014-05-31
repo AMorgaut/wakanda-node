@@ -56,9 +56,9 @@ This version of the package add the following API:
 
 Once installed, just start your code with this simple line
 
-`javascript
+```javascript
 require('wakanda-node');
-`
+```
 
 All code that will then be executed in this thread, either from the same file, included files, or modules loaded with `require()`), will have access to the additionnal Node.js API. 
 
