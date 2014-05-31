@@ -42,6 +42,7 @@ This version of the package add the following API:
 * **[Os](http://nodejs.org/api/os.html)** (miss `os.cpus()`, `os.freemem()`, `os.tmbdir()`, `os.uptime()`) ([local node doc](./doc_node/os.markdown))
 	* works on MacOS, potentially Linux, not yet Windows
 * **[Punycode](http://nodejs.org/api/punycode.html):** used via `require('punnycode')` ([local node doc](./doc_node/punycode.markdown))
+	* **/!\ Don't throw exceptions but don't pass the test suite**
 * [Process](http://nodejs.org/api/process.html) (partial) ([local node doc](./doc_node/process.markdown))
 	* **`process.platform`**
 	* **`process.env`** (empty, still useful as is to prevent exceptions)
@@ -55,9 +56,9 @@ This version of the package add the following API:
 
 Once installed, just start your code with this simple line
 
-```javascript
+`javascript
 require('wakanda-node');
-```
+`
 
 All code that will then be executed in this thread, either from the same file, included files, or modules loaded with `require()`), will have access to the additionnal Node.js API. 
 
@@ -79,6 +80,10 @@ This code be added to the **required.js** file at the [project](http://doc.wakan
 
 * Polyfils written in JS of [C node.js modules](https://github.com/joyent/node/tree/master/src) called from JavaScript via `process.binding(id)`
 
+### [doc_node](./doc_node)
+
+* Contains conform copies of some **node.js Markdown doc files** from the [**"doc/api"**](https://github.com/joyent/node/tree/master/doc/api) folder of its [official github repository](https://github.com/joyent/node/) 
+
 ### [lib](./lib)
 
 * Polyfil files to extend current Wakanda support of some node.js API
@@ -87,9 +92,13 @@ This code be added to the **required.js** file at the [project](http://doc.wakan
 
 * Contains conform copies of some **node.js JavaScript source files** from the [**"lib"**](https://github.com/joyent/node/tree/master/lib) folder of its [official github repository](https://github.com/joyent/node/) 
 
-### [doc_node](./doc_node)
+### [test](./test)
 
-* Contains conform copies of some **node.js Markdown doc files** from the [**"doc/api"**](https://github.com/joyent/node/tree/master/doc/api) folder of its [official github repository](https://github.com/joyent/node/) 
+* Script used to launch the official node.js unit tests (see folder [test_node](#test_node))
+
+### [test_node](./test_node)
+
+* Contains conform copies of the  **node.js test suite files** from the [**"test"**](https://github.com/joyent/node/tree/master/test) folder of its [official github repository](https://github.com/joyent/node/) 
 
 ## What next?
 
