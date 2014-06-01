@@ -45,7 +45,7 @@ This version of the package add the following API:
 	* **/!\ Don't throw exceptions but don't pass the test suite**
 * [Process](http://nodejs.org/api/process.html) (partial) ([local node doc](./doc_node/process.markdown))
 	* **`process.platform`**
-	* **`process.env`** (empty, still useful as is to prevent exceptions)
+	* **`process.env`**
 	* **`process.versions`** (almost empty)
 	* **`process.binding`** (internal)
 * **[Query Strings](http://nodejs.org/api/querystring.html):** used via `require('querystring')`([local node doc](./doc_node/querystring.markdown))
