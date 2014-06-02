@@ -47,7 +47,7 @@ This version of the package add the following API:
 	* only miss `os.cpus()`, `os.freemem()`, and `os.uptime()`
 * [Punycode](http://nodejs.org/api/punycode.html): ([local node doc](./doc_node/punycode.markdown)) (experimental)
 	* used via `require('punnycode')` 
-	* **unit tests: FAILED**
+	* **unit tests: UNSTABLE** (fail first, then pass)
 * **[Path](http://nodejs.org/api/path.html)** ([local node doc](./doc_node/path.markdown))
 * [Process](http://nodejs.org/api/process.html) ([local node doc](./doc_node/process.markdown)) (partial support)
 	* used via the global `process` variable
