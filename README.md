@@ -44,7 +44,7 @@ This version of the package add the following API:
 * **[Os](http://nodejs.org/api/os.html)** ([local node doc](./doc_node/os.markdown)) (partial support)
 	* used via the global `os` variable or via `require('os')`
 	* works on MacOS, should work on Linux, not yet on Windows (in progress)
-	* only miss `os.cpus()`, `os.freemem()`, `os.tmbdir()`, and `os.uptime()`
+	* only miss `os.cpus()`, `os.freemem()`, and `os.uptime()`
 * [Punycode](http://nodejs.org/api/punycode.html): ([local node doc](./doc_node/punycode.markdown)) (experimental)
 	* used via `require('punnycode')` 
 	* **unit tests: FAILED**
@@ -52,6 +52,7 @@ This version of the package add the following API:
 	* **unit tests: PASSED**
 * [Process](http://nodejs.org/api/process.html) ([local node doc](./doc_node/process.markdown)) (partial support)
 	* used via the global `process` variable
+	* **`process.arch`** (ok)
 	* **`process.platform`** (ok)
 	* **`process.env`** (ok)
 	* **`process.versions`** (partial, wakanda don't have all the same components)
