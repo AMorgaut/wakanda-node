@@ -5,6 +5,8 @@
 
 ### Wakanda
 
+Wakanda is a Web Application platform that propose a sever at its core with a NoSQL Object JS/REST database engine, some HTTP services, a facultative front-end framework, and a development tool suite. It integrates nicely with third party frameworks and dev tools and is highly customisable.
+
 To make its **Server-Side JavaScript** as most standard and compatible with Client-Side JavaScript as possible, [Wakanda](http://wakanda.org) has been mostly based on the native support of **CommonJS** and **HTML5 API on the server** like
 
 * [W3C Blob](http://doc.wakanda.org/BLOB/BLOB.100-866245.en.html)
@@ -28,29 +30,41 @@ but it still already support some **node.js API** including:
 
 This [wakanka-node](https://github.com/AMorgaut/wakanda-node) package is meant to add more [node.js](http://nodejs.org) API support to [Wakanda Server](http://wakanda.org) to make more node.js modules compatible with Wakanda (and to also directly bring additionnal nice features for your own code).
 
-This is mostly done using some **original node.js JavaScript source files** from its [official github repository](https://github.com/joyent/node/), but will also include some patches and polyfil to make Wakanda even more node compliant.
+This is mostly done using some **original node.js JavaScript source files** from its [official github repository](https://github.com/joyent/node/) (MIT licensed), but also includes some patches and polyfils to make Wakanda even more node compliant.
 
-Current wakanda-node version is based on node.js version 0.11.13
+Current wakanda-node version is based on Wakanda 8 & node.js 0.11.13
 
 ## Additional Node.js API
 
 
 This version of the package add the following API:
 
-* [Globals](http://nodejs.org/api/globals.html) (partial) ([local node doc](./doc_node/globals.markdown))
-	* **`global`**: ([node doc](http://nodejs.org/api/globals.html#globals_global) | [local node doc](./doc_node/globals.markdown#global))
-* **[Os](http://nodejs.org/api/os.html)** (miss `os.cpus()`, `os.freemem()`, `os.tmbdir()`, `os.uptime()`) ([local node doc](./doc_node/os.markdown))
-	* works on MacOS, potentially Linux, not yet Windows
-* **[Punycode](http://nodejs.org/api/punycode.html):** used via `require('punnycode')` ([local node doc](./doc_node/punycode.markdown))
-	* **/!\ Don't throw exceptions but don't pass the test suite**
-* [Process](http://nodejs.org/api/process.html) (partial) ([local node doc](./doc_node/process.markdown))
-	* **`process.platform`**
-	* **`process.env`**
-	* **`process.versions`** (almost empty)
-	* **`process.binding`** (internal)
-* **[Query Strings](http://nodejs.org/api/querystring.html):** used via `require('querystring')`([local node doc](./doc_node/querystring.markdown))
-* **[Url](http://nodejs.org/api/url.html):** used via `require('url')`([local node doc](./doc_node/url.markdown))
-* **[Utilities](http://nodejs.org/api/util.html):** used via `require('util')`([local node doc](./doc_node/util.markdown))
+* [Globals](http://nodejs.org/api/globals.html) ([local node doc](./doc_node/globals.markdown)) (partial support)
+	* **`global`** (ok)
+* **[Os](http://nodejs.org/api/os.html)** ([local node doc](./doc_node/os.markdown)) (partial support)
+	* used via the global `os` variable or via `require('os')`
+	* works on MacOS, should work on Linux, not yet on Windows (in progress)
+	* only miss `os.cpus()`, `os.freemem()`, `os.tmbdir()`, and `os.uptime()`
+* [Punycode](http://nodejs.org/api/punycode.html): ([local node doc](./doc_node/punycode.markdown)) (experimental)
+	* used via `require('punnycode')` 
+	* **unit tests: FAILED**
+* **[Path](http://nodejs.org/api/path.html)** ([local node doc](./doc_node/path.markdown))
+	* **unit tests: PASSED**
+* [Process](http://nodejs.org/api/process.html) ([local node doc](./doc_node/process.markdown)) (partial support)
+	* used via the global `process` variable
+	* **`process.platform`** (ok)
+	* **`process.env`** (ok)
+	* **`process.versions`** (partial, wakanda don't have all the same components)
+	* **`process.binding`** (ok to load internal modules ported in JS, may also use `requireNative()` in the future)
+* **[Query Strings](http://nodejs.org/api/querystring.html):** ([local node doc](./doc_node/querystring.markdown))
+	* used via `require('querystring')`
+	* **unit tests: PASSED**
+* **[Url](http://nodejs.org/api/url.html):** ([local node doc](./doc_node/url.markdown))
+	* used via `require('url')`
+	* **unit tests: PASSED**
+* **[Utilities](http://nodejs.org/api/util.html):** ([local node doc](./doc_node/util.markdown))
+	* used via `require('util')`
+	* **unit tests: PASSED**
 
 ## How to use
 
@@ -66,7 +80,7 @@ If you call a dedicated or shared worker that need such additionnal node.js API,
 
 __TIPS:__ 
 
-This code be added to the **required.js** file at the [project](http://doc.wakanda.org/Architecture-of-Wakanda-Applications/Project.200-1022680.en.html#1022932) or [solution](http://doc.wakanda.org/Architecture-of-Wakanda-Applications/Solution.200-1022674.en.html#1022744) level to automatically initialyse all of their Wakanda thread with **wakanda-node**
+This code be added to the **required.js** file at the [project](http://doc.wakanda.org/Architecture-of-Wakanda-Applications/Project.200-1022680.en.html#1022932) or [solution](http://doc.wakanda.org/Architecture-of-Wakanda-Applications/Solution.200-1022674.en.html#1022744) level to automatically initialise all of their Wakanda threads with **wakanda-node**
 
 
 ## Architecture
