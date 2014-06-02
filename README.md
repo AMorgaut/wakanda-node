@@ -116,25 +116,47 @@ This code be added to the **required.js** file at the [project](http://doc.wakan
 
 ## What next?
 
-In a perfect world such package would make wakanda 100% node.js compliant as perfect  polyfill. Unfortunatly few things can not be done that easily like `__filename`and `__dirname` (I'd recommend modules authors to use `module.filename` instead).
+### wakanda-node future
+
+One of the goals of wakanda node (as is the one of Apache Cordova), is to become useless because of future full native node API support. In a perfect world such package would also make wakanda 100% node.js compliant, as perfect  polyfill. Unfortunatly few things can not be done that easily like `__filename`and `__dirname` (I'd recommend modules authors to use `module.filename` instead).
 
 There is still few interestings things that could potentially be done in pure JS in this package
 
-* integration of [Path](http://nodejs.org/api/path.html), [String Decoder](http://nodejs.org/api/string_decoder.html), [Stream](http://nodejs.org/api/stream.html) (in progress)
-* a patch on `require()` to support `nodes_modules` folders
+* integration of [String Decoder](http://nodejs.org/api/string_decoder.html), [Stream](http://nodejs.org/api/stream.html) (in progress)
+* an alternative `require()` version to support `nodes_modules` folders and a node specific caching mechanism
 * a [File System](http://nodejs.org/api/fs.html) (`fs`) polyfil via the Wakanda/W3C Filesystem API 
-	* -> may also work client-side
+	* -> may also partially work client-side
 * a [Child Processes](http://nodejs.org/api/child_process.html) (`child_process`) polyfil via the Wakanda/W3C Web Worker API
-	* -> may also work client-side
+	* -> may also partially work client-side
 * few more...
 
 Might be interesting to see if [emscripten](https://github.com/kripken/emscripten) could convert some of the node.js C modules into some working JS ones, but I must confess I don't put much hope in that (worth at least a try for fun).
 
+### wakanda future
 
-**Any contribution is welcome :-)**
-
-In the meantime, the Wakanda team will probably and more node.js API support too.
+In the meantime, the Wakanda team will probably add more node.js API support too.
 It looks like the command line API is going to get better in Wakanda 9, potentially via more node.js `process` API support (`stdin`, `stdout`, `stderr`, and `env` ?)
+
+## Contributions
+
+Any contribution is welcome :-)
+
+### Communication
+
+If it looks interesting to you, don't hesitate to watch it, start it, and share it with your communities via twitter, G+, linkedin, facebook, your forums, mailing lists, or blog. The more people use it, the more I will be able to enhance it.
+
+### Feedbacks
+
+Please if you need it, or want to have fun, test it, use it, and [post me issues](https://github.com/AMorgaut/wakanda-node/issues), either to give your own implementation priorities (**feature requests**) or some **bug reports**.
+
+Feel free to participate to the [wakanda-node community wiki](https://github.com/AMorgaut/wakanda-node/wiki) to share a **list of node modules you successfully used on wakanda**, with or without wakanda-node (some working without wakanda-node are already listed in the [Wakanda-Packages/wakanda-modules](https://github.com/Wakanda-Packages/wakanda-modules) github repository)
+
+### Pull Requests
+
+You know node.js, or wakanda, or JavaScript, or some of the internal libraries used by node (ares, uv, http_parser, ...)?
+You can probably participate, make a fork, and [send Pull Requests](https://github.com/AMorgaut/wakanda-node/pulls). Please consider creating dedicated branches, integrating unit tests and documentation, by I still will look at anything you'll submit (as long as it is pertinent). **By sending "Pull Requests", you give permissions to use your code under the wakanda-node MIT License.**
+
+
 
 ## License
 
