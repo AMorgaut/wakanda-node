@@ -49,7 +49,6 @@ This version of the package add the following API:
 	* used via `require('punnycode')` 
 	* **unit tests: FAILED**
 * **[Path](http://nodejs.org/api/path.html)** ([local node doc](./doc_node/path.markdown))
-	* **unit tests: PASSED**
 * [Process](http://nodejs.org/api/process.html) ([local node doc](./doc_node/process.markdown)) (partial support)
 	* used via the global `process` variable
 	* **`process.arch`** (ok)
