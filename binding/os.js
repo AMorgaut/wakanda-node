@@ -100,14 +100,10 @@ exports.getFreeMem = function getFreeMem() {
 
 exports.getCPUs = function getCPUs() {
     // Partial support for MacOS / BSD
-    var iostatStr, usIndex, syIndex, idIndex, iostat;
+    var iostatStr, iostat;
     var regex = /[\s]+/;
     iostatStr = SystemWorker.exec('iostat').output.toString();
-    // reduce to the data line
     iostat = iostatStr.split(EOL)[2];
-//    usIndex = iostat[0].indexOf('us');
-//    syIndex = iostat[0].indexOf('sy');
-//    idIndex = iostat[0].indexOf('id');
     iostat = iostat.trim().split(regex);
     console.warn('Current values returned by os.cpus() are not yet the same than the ones returned by node.js');
     return getHw().CPUs.map(function (current) {
