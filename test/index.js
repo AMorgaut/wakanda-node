@@ -1,13 +1,6 @@
 ﻿require('wakanda-node');
 
-API = [
-    'punycode', // fail
-    'querystring', 
-    'url', 
-    'util'
-]
-
-API.forEach(function(api) {
+function runTest(api) {
     try {
         require('../test_node/simple/test-' + api);
         console.info('PASSED - ' + api);
@@ -15,6 +8,16 @@ API.forEach(function(api) {
     catch (e) {
         console.error('FAILED - ' + api + ':', e);
     }
-});
+}
+
+TESTS = [
+    'global',
+    'punycode', // fail
+    'querystring', 
+    'url', 
+    'util'
+]
+
+TESTS.forEach(runTest);
 
 console.content;
