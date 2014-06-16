@@ -1,4 +1,14 @@
-﻿
+﻿/**
+ * @class Process
+ * @see http://nodejs.org/api/process.html
+ **/
+
+/**
+ * @experimental not implemented
+ * @property argv
+ * @type {Array}
+ * @see http://nodejs.org/api/process.html#process_process_argv
+ **/
 if (!process.argv) {
     Object.defineProperty(process, 'argv', {
         get: function process_argv_getter() {
@@ -18,21 +28,40 @@ if (!process.argv) {
 }
 
 
+/**
+ * @property binding
+ * @type {Object}
+ * @see http://nodejs.org/api/process.html#process_process_binding
+ **/
 process.binding = function binding(id) {
     return require('../binding/' + id);
 };
 
-// Wakanda makes no difference between freebsd, linux and sunos
-// sunos probably not supported 
-// diff between linux and freebsd should be checked via SystemWorker.exec()
-Object.defineProperty(process, 'platform', {
+
+/**
+ * @experimental
+ * @property platform
+ * @type {string}
+ * @see http://nodejs.org/api/process.html#process_process_platform
+ **/
+ Object.defineProperty(process, 'platform', {
+    // Wakanda makes no difference between freebsd, linux and sunos
+    // sunos probably not supported 
+    // diff between linux and freebsd should be checked via SystemWorker.exec()
     get: function process_platform_getter() {
         return os.isWindows ? 'win32' : (os.isMac ? 'darwin' : 'freebsd');
     }
 });
 
-// An object containing the user environment. See environ(7).
-if (!process.env) {
+
+/**
+ * An object containing the user environment. See environ(7).
+ *
+ * @property platform
+ * @type {string}
+ * @see http://nodejs.org/api/process.html#process_process_env
+ **/
+ if (!process.env) {
     Object.defineProperty(process, 'env', {
         get: function process_env_getter() {
             var env = {};
@@ -49,8 +78,24 @@ if (!process.env) {
     });
 }
 
+
+/**
+ * @experimental not implemented
+ * @property execArgv
+ * @type {Array}
+ * @see http://nodejs.org/api/process.html#process_process_execArgv
+ **/
 process.execArgv = process.execArgv || [];
 
+
+/**
+ * What processor architecture you're running on: 'arm', 'ia32', or 'x64'.
+ *
+ * @experimental no arm support - no windows support
+ * @property arch
+ * @type {Array}
+ * @see http://nodejs.org/api/process.html#process_process_arch
+ **/
 function process_arch_getter() {
     var arch;
     var os = require('os');
@@ -67,16 +112,28 @@ if (!process.arch) {
     });
 }
 
-// Note that this just a hack, not a real implementation
+
+/**
+ * @experimental this is just a hack, not a real implementation
+ * @method nextTick
+ * @param {function} callback
+ * @see http://nodejs.org/api/process.html#process_process_nexttick_callback
+ **/
 process.nextTick = function nextTick(callback) {
     setTimeOut(callback, 0);
-}
+};
 
+
+/**
+ * @property versions
+ * @type {Object}
+ * @experimental this is just a hack, not a real implementation
+ * @todo change static values for dynamic ones?
+ * @see http://nodejs.org/api/process.html#process_process_versions
+ * @see https://github.com/Wakanda/core-Wakanda/wiki/branches
+ **/
 var wakandaVersion = process.version.split(' ').pop();
 var majorVersion = wakandaVersion.split('.').shift();
-// Static version number based on Wak 8
-// TODO: change static values for dynamic ones
-// @see https://github.com/Wakanda/core-Wakanda/wiki/branches#wak8
 process.versions = {
     openssl: ({
         '8': '1.0.0d',
@@ -163,8 +220,15 @@ if (os.isWindows) {
     })[majorVersion]
 }
 
-// process.config
-// TODO: change static values for dynamic ones
+
+/**
+ * @property config
+ * @type {Object}
+ * @experimental this is just a hack, not a real implementation
+ * @todo change static values for dynamic ones?
+ * @see http://nodejs.org/api/process.html#process_process_config
+ * @see https://github.com/Wakanda/core-Wakanda/wiki/branches
+ **/
 process.config = {
     target_defaults: {
         cflags: [],
