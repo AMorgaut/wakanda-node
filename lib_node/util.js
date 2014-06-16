@@ -21,7 +21,7 @@
 
 var formatRegExp = /%[sdj%]/g;
 exports.format = function(f) {
-  if (!isString(f)) {
+  if (typeof f !== 'string') {
     var objects = [];
     for (var i = 0; i < arguments.length; i++) {
       objects.push(inspect(arguments[i]));
@@ -38,18 +38,13 @@ exports.format = function(f) {
     switch (x) {
       case '%s': return String(args[i++]);
       case '%d': return Number(args[i++]);
-      case '%j':
-        try {
-          return JSON.stringify(args[i++]);
-        } catch (_) {
-          return '[Circular]';
-        }
+      case '%j': return JSON.stringify(args[i++]);
       default:
         return x;
     }
   });
   for (var x = args[i]; i < len; x = args[++i]) {
-    if (isNull(x) || !isObject(x)) {
+    if (x === null || typeof x !== 'object') {
       str += ' ' + x;
     } else {
       str += ' ' + inspect(x);
@@ -63,13 +58,6 @@ exports.format = function(f) {
 // Returns a modified function which warns once by default.
 // If --no-deprecation is set, then it is a no-op.
 exports.deprecate = function(fn, msg) {
-  // Allow for deprecating things in the process of starting up.
-  if (isUndefined(global.process)) {
-    return function() {
-      return exports.deprecate(fn, msg).apply(this, arguments);
-    };
-  }
-
   if (process.noDeprecation === true) {
     return fn;
   }
@@ -93,24 +81,29 @@ exports.deprecate = function(fn, msg) {
 };
 
 
-var debugs = {};
-var debugEnviron;
-exports.debuglog = function(set) {
-  if (isUndefined(debugEnviron))
-    debugEnviron = process.env.NODE_DEBUG || '';
-  set = set.toUpperCase();
-  if (!debugs[set]) {
-    if (new RegExp('\\b' + set + '\\b', 'i').test(debugEnviron)) {
-      var pid = process.pid;
-      debugs[set] = function() {
-        var msg = exports.format.apply(exports, arguments);
-        console.error('%s %d: %s', set, pid, msg);
-      };
-    } else {
-      debugs[set] = function() {};
-    }
+exports.print = function() {
+  for (var i = 0, len = arguments.length; i < len; ++i) {
+    process.stdout.write(String(arguments[i]));
   }
-  return debugs[set];
+};
+
+
+exports.puts = function() {
+  for (var i = 0, len = arguments.length; i < len; ++i) {
+    process.stdout.write(arguments[i] + '\n');
+  }
+};
+
+
+exports.debug = function(x) {
+  process.stderr.write('DEBUG: ' + x + '\n');
+};
+
+
+var error = exports.error = function(x) {
+  for (var i = 0, len = arguments.length; i < len; ++i) {
+    process.stderr.write(arguments[i] + '\n');
+  }
 };
 
 
@@ -131,7 +124,7 @@ function inspect(obj, opts) {
   // legacy...
   if (arguments.length >= 3) ctx.depth = arguments[2];
   if (arguments.length >= 4) ctx.colors = arguments[3];
-  if (isBoolean(opts)) {
+  if (typeof opts === 'boolean') {
     // legacy...
     ctx.showHidden = opts;
   } else if (opts) {
@@ -139,10 +132,10 @@ function inspect(obj, opts) {
     exports._extend(ctx, opts);
   }
   // set default options
-  if (isUndefined(ctx.showHidden)) ctx.showHidden = false;
-  if (isUndefined(ctx.depth)) ctx.depth = 2;
-  if (isUndefined(ctx.colors)) ctx.colors = false;
-  if (isUndefined(ctx.customInspect)) ctx.customInspect = true;
+  if (typeof ctx.showHidden === 'undefined') ctx.showHidden = false;
+  if (typeof ctx.depth === 'undefined') ctx.depth = 2;
+  if (typeof ctx.colors === 'undefined') ctx.colors = false;
+  if (typeof ctx.customInspect === 'undefined') ctx.customInspect = true;
   if (ctx.colors) ctx.stylize = stylizeWithColor;
   return formatValue(ctx, obj, ctx.depth);
 }
@@ -211,18 +204,12 @@ function arrayToHash(array) {
 function formatValue(ctx, value, recurseTimes) {
   // Provide a hook for user-specified inspect functions.
   // Check that value is an object with an inspect function on it
-  if (ctx.customInspect &&
-      value &&
-      isFunction(value.inspect) &&
+  if (ctx.customInspect && value && typeof value.inspect === 'function' &&
       // Filter out the util module, it's inspect function is special
       value.inspect !== exports.inspect &&
       // Also filter out any prototype objects using the circular check.
       !(value.constructor && value.constructor.prototype === value)) {
-    var ret = value.inspect(recurseTimes, ctx);
-    if (!isString(ret)) {
-      ret = formatValue(ctx, ret, recurseTimes);
-    }
-    return ret;
+    return String(value.inspect(recurseTimes));
   }
 
   // Primitive types cannot have properties
@@ -239,31 +226,9 @@ function formatValue(ctx, value, recurseTimes) {
     keys = Object.getOwnPropertyNames(value);
   }
 
-  // This could be a boxed primitive (new String(), etc.), check valueOf()
-  // NOTE: Avoid calling `valueOf` on `Date` instance because it will return
-  // a number which, when object has some additional user-stored `keys`,
-  // will be printed out.
-  var formatted;
-  var raw = value;
-  try {
-    // the .valueOf() call can fail for a multitude of reasons
-    if (!isDate(value))
-      raw = value.valueOf();
-  } catch (e) {
-    // ignore...
-  }
-
-  if (isString(raw)) {
-    // for boxed Strings, we have to remove the 0-n indexed entries,
-    // since they just noisey up the output and are redundant
-    keys = keys.filter(function(key) {
-      return !(key >= 0 && key < raw.length);
-    });
-  }
-
   // Some type of object without properties can be shortcutted.
   if (keys.length === 0) {
-    if (isFunction(value)) {
+    if (typeof value === 'function') {
       var name = value.name ? ': ' + value.name : '';
       return ctx.stylize('[Function' + name + ']', 'special');
     }
@@ -276,19 +241,6 @@ function formatValue(ctx, value, recurseTimes) {
     if (isError(value)) {
       return formatError(value);
     }
-    // now check the `raw` value to handle boxed primitives
-    if (isString(raw)) {
-      formatted = formatPrimitiveNoColor(ctx, raw);
-      return ctx.stylize('[String: ' + formatted + ']', 'string');
-    }
-    if (isNumber(raw)) {
-      formatted = formatPrimitiveNoColor(ctx, raw);
-      return ctx.stylize('[Number: ' + formatted + ']', 'number');
-    }
-    if (isBoolean(raw)) {
-      formatted = formatPrimitiveNoColor(ctx, raw);
-      return ctx.stylize('[Boolean: ' + formatted + ']', 'boolean');
-    }
   }
 
   var base = '', array = false, braces = ['{', '}'];
@@ -300,7 +252,7 @@ function formatValue(ctx, value, recurseTimes) {
   }
 
   // Make functions say that they are functions
-  if (isFunction(value)) {
+  if (typeof value === 'function') {
     var n = value.name ? ': ' + value.name : '';
     base = ' [Function' + n + ']';
   }
@@ -320,25 +272,7 @@ function formatValue(ctx, value, recurseTimes) {
     base = ' ' + formatError(value);
   }
 
-  // Make boxed primitive Strings look like such
-  if (isString(raw)) {
-    formatted = formatPrimitiveNoColor(ctx, raw);
-    base = ' ' + '[String: ' + formatted + ']';
-  }
-
-  // Make boxed primitive Numbers look like such
-  if (isNumber(raw)) {
-    formatted = formatPrimitiveNoColor(ctx, raw);
-    base = ' ' + '[Number: ' + formatted + ']';
-  }
-
-  // Make boxed primitive Booleans look like such
-  if (isBoolean(raw)) {
-    formatted = formatPrimitiveNoColor(ctx, raw);
-    base = ' ' + '[Boolean: ' + formatted + ']';
-  }
-
-  if (keys.length === 0 && (!array || value.length === 0)) {
+  if (keys.length === 0 && (!array || value.length == 0)) {
     return braces[0] + base + braces[1];
   }
 
@@ -368,35 +302,26 @@ function formatValue(ctx, value, recurseTimes) {
 
 
 function formatPrimitive(ctx, value) {
-  if (isUndefined(value))
-    return ctx.stylize('undefined', 'undefined');
-  if (isString(value)) {
-    var simple = '\'' + JSON.stringify(value).replace(/^"|"$/g, '')
-                                             .replace(/'/g, "\\'")
-                                             .replace(/\\"/g, '"') + '\'';
-    return ctx.stylize(simple, 'string');
+  switch (typeof value) {
+    case 'undefined':
+      return ctx.stylize('undefined', 'undefined');
+
+    case 'string':
+      var simple = '\'' + JSON.stringify(value).replace(/^"|"$/g, '')
+                                               .replace(/'/g, "\\'")
+                                               .replace(/\\"/g, '"') + '\'';
+      return ctx.stylize(simple, 'string');
+
+    case 'number':
+      return ctx.stylize('' + value, 'number');
+
+    case 'boolean':
+      return ctx.stylize('' + value, 'boolean');
   }
-  if (isNumber(value)) {
-    // Format -0 as '-0'. Strict equality won't distinguish 0 from -0,
-    // so instead we use the fact that 1 / -0 < 0 whereas 1 / 0 > 0 .
-    if (value === 0 && 1 / value < 0)
-      return ctx.stylize('-0', 'number');
-    return ctx.stylize('' + value, 'number');
-  }
-  if (isBoolean(value))
-    return ctx.stylize('' + value, 'boolean');
   // For some reason typeof null is "object", so special case here.
-  if (isNull(value))
+  if (value === null) {
     return ctx.stylize('null', 'null');
-}
-
-
-function formatPrimitiveNoColor(ctx, value) {
-  var stylize = ctx.stylize;
-  ctx.stylize = stylizeNoColor;
-  var str = formatPrimitive(ctx, value);
-  ctx.stylize = stylize;
-  return str;
+  }
 }
 
 
@@ -444,7 +369,7 @@ function formatProperty(ctx, value, recurseTimes, visibleKeys, key, array) {
   }
   if (!str) {
     if (ctx.seen.indexOf(desc.value) < 0) {
-      if (isNull(recurseTimes)) {
+      if (recurseTimes === null) {
         str = formatValue(ctx, desc.value, null);
       } else {
         str = formatValue(ctx, desc.value, recurseTimes - 1);
@@ -464,7 +389,7 @@ function formatProperty(ctx, value, recurseTimes, visibleKeys, key, array) {
       str = ctx.stylize('[Circular]', 'special');
     }
   }
-  if (isUndefined(name)) {
+  if (typeof name === 'undefined') {
     if (array && key.match(/^\d+$/)) {
       return str;
     }
@@ -475,8 +400,7 @@ function formatProperty(ctx, value, recurseTimes, visibleKeys, key, array) {
     } else {
       name = name.replace(/'/g, "\\'")
                  .replace(/\\"/g, '"')
-                 .replace(/(^"|"$)/g, "'")
-                 .replace(/\\\\/g, '\\');
+                 .replace(/(^"|"$)/g, "'");
       name = ctx.stylize(name, 'string');
     }
   }
@@ -486,8 +410,11 @@ function formatProperty(ctx, value, recurseTimes, visibleKeys, key, array) {
 
 
 function reduceToSingleString(output, base, braces) {
+  var numLinesEst = 0;
   var length = output.reduce(function(prev, cur) {
-    return prev + cur.replace(/\u001b\[\d\d?m/g, '').length + 1;
+    numLinesEst++;
+    if (cur.indexOf('\n') >= 0) numLinesEst++;
+    return prev + cur.length + 1;
   }, 0);
 
   if (length > 60) {
@@ -505,87 +432,42 @@ function reduceToSingleString(output, base, braces) {
 
 // NOTE: These type checking functions intentionally don't use `instanceof`
 // because it is fragile and can be easily faked with `Object.create()`.
-var isArray = exports.isArray = Array.isArray;
-
-function isBoolean(arg) {
-  return typeof arg === 'boolean';
+function isArray(ar) {
+  return Array.isArray(ar) ||
+         (typeof ar === 'object' && objectToString(ar) === '[object Array]');
 }
-exports.isBoolean = isBoolean;
+exports.isArray = isArray;
 
-function isNull(arg) {
-  return arg === null;
-}
-exports.isNull = isNull;
-
-function isNullOrUndefined(arg) {
-  return arg == null;
-}
-exports.isNullOrUndefined = isNullOrUndefined;
-
-function isNumber(arg) {
-  return typeof arg === 'number';
-}
-exports.isNumber = isNumber;
-
-function isString(arg) {
-  return typeof arg === 'string';
-}
-exports.isString = isString;
-
-function isSymbol(arg) {
-  return typeof arg === 'symbol';
-}
-exports.isSymbol = isSymbol;
-
-function isUndefined(arg) {
-  return arg === void 0;
-}
-exports.isUndefined = isUndefined;
 
 function isRegExp(re) {
-  return isObject(re) && objectToString(re) === '[object RegExp]';
+  return typeof re === 'object' && objectToString(re) === '[object RegExp]';
 }
 exports.isRegExp = isRegExp;
 
-function isObject(arg) {
-  return typeof arg === 'object' && arg !== null;
-}
-exports.isObject = isObject;
 
 function isDate(d) {
-  return isObject(d) && objectToString(d) === '[object Date]';
+  return typeof d === 'object' && objectToString(d) === '[object Date]';
 }
 exports.isDate = isDate;
 
+
 function isError(e) {
-  return isObject(e) &&
+  return typeof e === 'object' &&
       (objectToString(e) === '[object Error]' || e instanceof Error);
 }
 exports.isError = isError;
 
-function isFunction(arg) {
-  return typeof arg === 'function';
-}
-exports.isFunction = isFunction;
-
-function isPrimitive(arg) {
-  return arg === null ||
-         typeof arg === 'boolean' ||
-         typeof arg === 'number' ||
-         typeof arg === 'string' ||
-         typeof arg === 'symbol' ||  // ES6 symbol
-         typeof arg === 'undefined';
-}
-exports.isPrimitive = isPrimitive;
-
-function isBuffer(arg) {
-  return arg instanceof Buffer;
-}
-exports.isBuffer = isBuffer;
 
 function objectToString(o) {
   return Object.prototype.toString.call(o);
 }
+
+
+exports.p = exports.deprecate(function() {
+  for (var i = 0, len = arguments.length; i < len; ++i) {
+    error(exports.inspect(arguments[i]));
+  }
+}, 'util.p: Use console.error() instead.');
 
 
 function pad(n) {
@@ -606,61 +488,9 @@ function timestamp() {
 }
 
 
-// log is just a thin wrapper to console.log that prepends a timestamp
-exports.log = function() {
-  console.log('%s - %s', timestamp(), exports.format.apply(exports, arguments));
+exports.log = function(msg) {
+  exports.puts(timestamp() + ' - ' + msg.toString());
 };
-
-
-/**
- * Inherit the prototype methods from one constructor into another.
- *
- * The Function.prototype.inherits from lang.js rewritten as a standalone
- * function (not on Function.prototype). NOTE: If this file is to be loaded
- * during bootstrapping this function needs to be rewritten using some native
- * functions as prototype setup using normal JavaScript does not work as
- * expected during bootstrapping (see mirror.js in r114903).
- *
- * @param {function} ctor Constructor function which needs to inherit the
- *     prototype.
- * @param {function} superCtor Constructor function to inherit prototype from.
- */
-exports.inherits = function(ctor, superCtor) {
-  ctor.super_ = superCtor;
-  ctor.prototype = Object.create(superCtor.prototype, {
-    constructor: {
-      value: ctor,
-      enumerable: false,
-      writable: true,
-      configurable: true
-    }
-  });
-};
-
-exports._extend = function(origin, add) {
-  // Don't do anything if add isn't an object
-  if (!add || !isObject(add)) return origin;
-
-  var keys = Object.keys(add);
-  var i = keys.length;
-  while (i--) {
-    origin[keys[i]] = add[keys[i]];
-  }
-  return origin;
-};
-
-function hasOwnProperty(obj, prop) {
-  return Object.prototype.hasOwnProperty.call(obj, prop);
-}
-
-
-// Deprecated old stuff.
-
-exports.p = exports.deprecate(function() {
-  for (var i = 0, len = arguments.length; i < len; ++i) {
-    console.error(exports.inspect(arguments[i]));
-  }
-}, 'util.p: Use console.error() instead');
 
 
 exports.exec = exports.deprecate(function() {
@@ -668,33 +498,7 @@ exports.exec = exports.deprecate(function() {
 }, 'util.exec is now called `child_process.exec`.');
 
 
-exports.print = exports.deprecate(function() {
-  for (var i = 0, len = arguments.length; i < len; ++i) {
-    process.stdout.write(String(arguments[i]));
-  }
-}, 'util.print: Use console.log instead');
-
-
-exports.puts = exports.deprecate(function() {
-  for (var i = 0, len = arguments.length; i < len; ++i) {
-    process.stdout.write(arguments[i] + '\n');
-  }
-}, 'util.puts: Use console.log instead');
-
-
-exports.debug = exports.deprecate(function(x) {
-  process.stderr.write('DEBUG: ' + x + '\n');
-}, 'util.debug: Use console.error instead');
-
-
-exports.error = exports.deprecate(function(x) {
-  for (var i = 0, len = arguments.length; i < len; ++i) {
-    process.stderr.write(arguments[i] + '\n');
-  }
-}, 'util.error: Use console.error instead');
-
-
-exports.pump = exports.deprecate(function(readStream, writeStream, callback) {
+function pump(readStream, writeStream, callback) {
   var callbackCalled = false;
 
   function call(a, b, c) {
@@ -729,19 +533,48 @@ exports.pump = exports.deprecate(function(readStream, writeStream, callback) {
     readStream.destroy();
     call(err);
   });
-}, 'util.pump(): Use readableStream.pipe() instead');
+}
+exports.pump = exports.deprecate(pump,
+    'util.pump() is deprecated. Use readableStream.pipe() instead.');
 
 
-var uv;
-exports._errnoException = function(err, syscall, original) {
-  if (isUndefined(uv)) uv = process.binding('uv');
-  var errname = uv.errname(err);
-  var message = syscall + ' ' + errname;
-  if (original)
-    message += ' ' + original;
-  var e = new Error(message);
-  e.code = errname;
-  e.errno = errname;
-  e.syscall = syscall;
-  return e;
+/**
+ * Inherit the prototype methods from one constructor into another.
+ *
+ * The Function.prototype.inherits from lang.js rewritten as a standalone
+ * function (not on Function.prototype). NOTE: If this file is to be loaded
+ * during bootstrapping this function needs to be rewritten using some native
+ * functions as prototype setup using normal JavaScript does not work as
+ * expected during bootstrapping (see mirror.js in r114903).
+ *
+ * @param {function} ctor Constructor function which needs to inherit the
+ *     prototype.
+ * @param {function} superCtor Constructor function to inherit prototype from.
+ */
+exports.inherits = function(ctor, superCtor) {
+  ctor.super_ = superCtor;
+  ctor.prototype = Object.create(superCtor.prototype, {
+    constructor: {
+      value: ctor,
+      enumerable: false,
+      writable: true,
+      configurable: true
+    }
+  });
 };
+
+exports._extend = function(origin, add) {
+  // Don't do anything if add isn't an object
+  if (!add || typeof add !== 'object') return origin;
+
+  var keys = Object.keys(add);
+  var i = keys.length;
+  while (i--) {
+    origin[keys[i]] = add[keys[i]];
+  }
+  return origin;
+};
+
+function hasOwnProperty(obj, prop) {
+  return Object.prototype.hasOwnProperty.call(obj, prop);
+}

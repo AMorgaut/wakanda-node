@@ -8,7 +8,8 @@ use npm to install the `punycode` module first.)
 
 ## punycode.decode(string)
 
-Converts a Punycode string of ASCII-only symbols to a string of Unicode symbols.
+Converts a Punycode string of ASCII code points to a string of Unicode code
+points.
 
     // decode domain name parts
     punycode.decode('maana-pta'); // 'mañana'
@@ -16,7 +17,8 @@ Converts a Punycode string of ASCII-only symbols to a string of Unicode symbols.
 
 ## punycode.encode(string)
 
-Converts a string of Unicode symbols to a Punycode string of ASCII-only symbols.
+Converts a string of Unicode code points to a Punycode string of ASCII code
+points.
 
     // encode domain name parts
     punycode.encode('mañana'); // 'maana-pta'
@@ -46,21 +48,21 @@ you call it with a domain that's already in ASCII.
 
 ### punycode.ucs2.decode(string)
 
-Creates an array containing the numeric code point values of each Unicode
-symbol in the string. While [JavaScript uses UCS-2
+Creates an array containing the decimal code points of each Unicode character
+in the string. While [JavaScript uses UCS-2
 internally](http://mathiasbynens.be/notes/javascript-encoding), this function
 will convert a pair of surrogate halves (each of which UCS-2 exposes as
 separate characters) into a single code point, matching UTF-16.
 
-    punycode.ucs2.decode('abc'); // [0x61, 0x62, 0x63]
+    punycode.ucs2.decode('abc'); // [97, 98, 99]
     // surrogate pair for U+1D306 tetragram for centre:
     punycode.ucs2.decode('\uD834\uDF06'); // [0x1D306]
 
 ### punycode.ucs2.encode(codePoints)
 
-Creates a string based on an array of numeric code point values.
+Creates a string based on an array of decimal code points.
 
-    punycode.ucs2.encode([0x61, 0x62, 0x63]); // 'abc'
+    punycode.ucs2.encode([97, 98, 99]); // 'abc'
     punycode.ucs2.encode([0x1D306]); // '\uD834\uDF06'
 
 ## punycode.version

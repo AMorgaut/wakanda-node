@@ -20,7 +20,6 @@
 // USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 var punycode = require('punycode');
-var util = require('util');
 
 exports.parse = urlParse;
 exports.resolve = urlResolve;
@@ -56,15 +55,16 @@ var protocolPattern = /^([a-z0-9.+-]+:)/i,
     delims = ['<', '>', '"', '`', ' ', '\r', '\n', '\t'],
 
     // RFC 2396: characters not allowed for various reasons.
-    unwise = ['{', '}', '|', '\\', '^', '`'].concat(delims),
+    unwise = ['{', '}', '|', '\\', '^', '~', '`'].concat(delims),
 
     // Allowed by RFCs, but cause of XSS attacks.  Always escape these.
-    autoEscape = ['\''].concat(unwise),
+    autoEscape = ['\''].concat(delims),
     // Characters that are never ever allowed in a hostname.
     // Note that any invalid chars are also handled, but these
     // are the ones that are *expected* to be seen, so we fast-path
     // them.
-    nonHostChars = ['%', '/', '?', ';', '#'].concat(autoEscape),
+    nonHostChars = ['%', '/', '?', ';', '#']
+      .concat(unwise).concat(autoEscape),
     hostEndingChars = ['/', '?', '#'],
     hostnameMaxLen = 255,
     hostnamePartPattern = /^[a-z0-9A-Z_-]{0,63}$/,
@@ -95,7 +95,7 @@ var protocolPattern = /^([a-z0-9.+-]+:)/i,
     querystring = require('querystring');
 
 function urlParse(url, parseQueryString, slashesDenoteHost) {
-  if (url && util.isObject(url) && url instanceof Url) return url;
+  if (url && typeof(url) === 'object' && url instanceof Url) return url;
 
   var u = new Url;
   u.parse(url, parseQueryString, slashesDenoteHost);
@@ -103,7 +103,7 @@ function urlParse(url, parseQueryString, slashesDenoteHost) {
 }
 
 Url.prototype.parse = function(url, parseQueryString, slashesDenoteHost) {
-  if (!util.isString(url)) {
+  if (typeof url !== 'string') {
     throw new TypeError("Parameter 'url' must be a string, not " + typeof url);
   }
 
@@ -347,7 +347,7 @@ function urlFormat(obj) {
   // If it's an obj, this is a no-op.
   // this way, you can call url_format() on strings
   // to clean up potentially wonky urls.
-  if (util.isString(obj)) obj = urlParse(obj);
+  if (typeof(obj) === 'string') obj = urlParse(obj);
   if (!(obj instanceof Url)) return Url.prototype.format.call(obj);
   return obj.format();
 }
@@ -377,8 +377,7 @@ Url.prototype.format = function() {
     }
   }
 
-  if (this.query &&
-      util.isObject(this.query) &&
+  if (this.query && typeof this.query === 'object' &&
       Object.keys(this.query).length) {
     query = querystring.stringify(this.query);
   }
@@ -422,7 +421,7 @@ function urlResolveObject(source, relative) {
 }
 
 Url.prototype.resolveObject = function(relative) {
-  if (util.isString(relative)) {
+  if (typeof relative === 'string') {
     var rel = new Url();
     rel.parse(relative, false, true);
     relative = rel;
@@ -562,7 +561,7 @@ Url.prototype.resolveObject = function(relative) {
     srcPath = srcPath.concat(relPath);
     result.search = relative.search;
     result.query = relative.query;
-  } else if (!util.isNullOrUndefined(relative.search)) {
+  } else if (relative.search !== null && relative.search !== undefined) {
     // just pull out the search.
     // like href='?foo'.
     // Put this after the other two cases because it simplifies the booleans
@@ -581,7 +580,7 @@ Url.prototype.resolveObject = function(relative) {
     result.search = relative.search;
     result.query = relative.query;
     //to support http.request
-    if (!util.isNull(result.pathname) || !util.isNull(result.search)) {
+    if (result.pathname !== null || result.search !== null) {
       result.path = (result.pathname ? result.pathname : '') +
                     (result.search ? result.search : '');
     }
@@ -616,7 +615,7 @@ Url.prototype.resolveObject = function(relative) {
   var up = 0;
   for (var i = srcPath.length; i >= 0; i--) {
     last = srcPath[i];
-    if (last === '.') {
+    if (last == '.') {
       srcPath.splice(i, 1);
     } else if (last === '..') {
       srcPath.splice(i, 1);
@@ -675,7 +674,7 @@ Url.prototype.resolveObject = function(relative) {
   }
 
   //to support request.http
-  if (!util.isNull(result.pathname) || !util.isNull(result.search)) {
+  if (result.pathname !== null || result.search !== null) {
     result.path = (result.pathname ? result.pathname : '') +
                   (result.search ? result.search : '');
   }

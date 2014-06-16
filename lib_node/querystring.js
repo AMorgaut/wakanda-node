@@ -22,7 +22,6 @@
 // Query String Utilities
 
 var QueryString = exports;
-var util = require('util');
 
 
 // If obj.hasOwnProperty has been overridden, then calling
@@ -115,41 +114,46 @@ QueryString.escape = function(str) {
 };
 
 var stringifyPrimitive = function(v) {
-  if (util.isString(v))
-    return v;
-  if (util.isBoolean(v))
-    return v ? 'true' : 'false';
-  if (util.isNumber(v))
-    return isFinite(v) ? v : '';
-  return '';
+  switch (typeof v) {
+    case 'string':
+      return v;
+
+    case 'boolean':
+      return v ? 'true' : 'false';
+
+    case 'number':
+      return isFinite(v) ? v : '';
+
+    default:
+      return '';
+  }
 };
 
 
-QueryString.stringify = QueryString.encode = function(obj, sep, eq, options) {
+QueryString.stringify = QueryString.encode = function(obj, sep, eq, name) {
   sep = sep || '&';
   eq = eq || '=';
-  if (util.isNull(obj)) {
+  if (obj === null) {
     obj = undefined;
   }
 
-  var encode = QueryString.escape;
-  if (options && typeof options.encodeURIComponent === 'function') {
-    encode = options.encodeURIComponent;
-  }
-
-  if (util.isObject(obj)) {
+  if (typeof obj === 'object') {
     return Object.keys(obj).map(function(k) {
-      var ks = encode(stringifyPrimitive(k)) + eq;
-      if (util.isArray(obj[k])) {
+      var ks = QueryString.escape(stringifyPrimitive(k)) + eq;
+      if (Array.isArray(obj[k])) {
         return obj[k].map(function(v) {
-          return ks + encode(stringifyPrimitive(v));
+          return ks + QueryString.escape(stringifyPrimitive(v));
         }).join(sep);
       } else {
-        return ks + encode(stringifyPrimitive(obj[k]));
+        return ks + QueryString.escape(stringifyPrimitive(obj[k]));
       }
     }).join(sep);
+
   }
-  return '';
+
+  if (!name) return '';
+  return QueryString.escape(stringifyPrimitive(name)) + eq +
+         QueryString.escape(stringifyPrimitive(obj));
 };
 
 // Parse a key=val string.
@@ -158,7 +162,7 @@ QueryString.parse = QueryString.decode = function(qs, sep, eq, options) {
   eq = eq || '=';
   var obj = {};
 
-  if (!util.isString(qs) || qs.length === 0) {
+  if (typeof qs !== 'string' || qs.length === 0) {
     return obj;
   }
 
@@ -166,7 +170,7 @@ QueryString.parse = QueryString.decode = function(qs, sep, eq, options) {
   qs = qs.split(sep);
 
   var maxKeys = 1000;
-  if (options && util.isNumber(options.maxKeys)) {
+  if (options && typeof options.maxKeys === 'number') {
     maxKeys = options.maxKeys;
   }
 
@@ -174,11 +178,6 @@ QueryString.parse = QueryString.decode = function(qs, sep, eq, options) {
   // maxKeys <= 0 means that we should not limit keys count
   if (maxKeys > 0 && len > maxKeys) {
     len = maxKeys;
-  }
-
-  var decode = decodeURIComponent;
-  if (options && typeof options.decodeURIComponent === 'function') {
-    decode = options.decodeURIComponent;
   }
 
   for (var i = 0; i < len; ++i) {
@@ -195,8 +194,8 @@ QueryString.parse = QueryString.decode = function(qs, sep, eq, options) {
     }
 
     try {
-      k = decode(kstr);
-      v = decode(vstr);
+      k = decodeURIComponent(kstr);
+      v = decodeURIComponent(vstr);
     } catch (e) {
       k = QueryString.unescape(kstr, true);
       v = QueryString.unescape(vstr, true);
@@ -204,7 +203,7 @@ QueryString.parse = QueryString.decode = function(qs, sep, eq, options) {
 
     if (!hasOwnProperty(obj, k)) {
       obj[k] = v;
-    } else if (util.isArray(obj[k])) {
+    } else if (Array.isArray(obj[k])) {
       obj[k].push(v);
     } else {
       obj[k] = [obj[k], v];

@@ -1,1 +1,0 @@
-﻿// Required by module "smalloc" which is required by "fs"// To be implementedexports.kMaxLength = undefined;exports.copyOnto = function copyOnto() {};exports.hasExternalData = function hasExternalData() {};exports.alloc = function alloc(obj, n, type) {};exports.dispose = function dispose(obj) {};
