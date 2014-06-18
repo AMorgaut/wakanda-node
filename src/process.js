@@ -98,7 +98,6 @@ process.execArgv = process.execArgv || [];
  **/
 function process_arch_getter() {
     var arch;
-    var os = require('os');
     var cmd = os.isWindows ? 'uname -a' : 'NOT IMPLEMENTED';
     arch = SystemWorker.exec(cmd).output.toString().split(' ').pop();
     arch = arch.indexOf('_64') ? 'x64' : 'x32';
@@ -227,39 +226,8 @@ if (os.isWindows) {
  * @experimental this is just a hack, not a real implementation
  * @todo change static values for dynamic ones?
  * @see http://nodejs.org/api/process.html#process_process_config
- * @see https://github.com/Wakanda/core-Wakanda/wiki/branches
  **/
-process.config = {
-    target_defaults: {
-        cflags: [],
-        default_configuration: 'Release',
-        defines: [],
-        include_dirs: [],
-        libraries: []
-    },
-    variables: {
-        clang: 0,
-        gcc_version: 42,
-        node_install_npm: true,
-        node_prefix: '',
-        node_shared_cares: false,
-        node_shared_http_parser: false,
-        node_shared_libuv: false,
-        node_shared_openssl: false,
-        node_shared_v8: false,
-        node_shared_zlib: false,
-        node_tag: '',
-        node_unsafe_optimizations: 0,
-        node_use_dtrace: true,
-        node_use_etw: false,
-        node_use_openssl: true,
-        node_use_perfctr: false,
-        python: '/usr/bin/python',
-        v8_enable_gdbjit: 0,
-        v8_no_strict_aliasing: 1,
-        v8_use_snapshot: false
-    }
-};
+process.config = {};
 Object.defineProperty(process.config.variables,  'host_arch',  {
     get: process_arch_getter,
     enumerable: true
@@ -268,3 +236,71 @@ Object.defineProperty(process.config.variables,  'target_arch',  {
     get: process_arch_getter,
     enumerable: true
 });
+
+
+/***************************************************************************/
+/*                 LOW LEVEL API USED BY "src/node.js"                     */
+/***************************************************************************/
+
+// -> NativeModule.require()
+process.moduleLoadList = [];
+
+// -> startup()
+// Not null If User passed '-e' or '--eval' arguments to Node.
+process._eval = null;
+
+// -> startup()
+// Not null If -i or --interactive were passed, or stdin is a TTY.
+process._forceRepl = null;
+
+// -> startup.processNextTick()
+Process._needTickCallback = function(){};
+process._tickInfoBox = {};
+
+// -> startup.processNextTick() -> evalScript()
+process._print_eval = false;
+
+
+
+// -> startup.processKillAndExit()
+var LINUX_SIGNALS = {
+    1:	 'HUP', // (hang up)
+    2:	 'INT', // (interrupt)
+    3:	 'QUIT', // (quit)
+    6:	 'ABRT', // (abort)
+    9:	 'KILL', // (non-catchable, non-ignorable kill)
+    14:	 'ALRM', // (alarm clock)
+    15:	 'TERM' // (software termination signal)
+};
+process._errno = 0;
+    
+/**
+ * @method process.kill
+ * @param {number} pid process id
+ * @param {string} signal string describing the signal to send
+ * @returns mixed
+ *
+ * @see http://nodejs.org/api/process.html#process_process_kill_pid_signal
+ * @see http://nodejs.org/api/process.html#process_signal_events
+ **/
+process._kill = function process_kill(pid, signal) {
+    var
+        cmd,
+        cmdSignal,
+        result;
+
+    process._errno = 0;
+
+    if (os.isWindows) {
+        throw new Error('kill() is not yet implemented on Windows');
+    }
+    
+    cmdSignal = constants[signal];
+    if (!cmdSignal || !LINUX_SIGNALS.hasOwnProperty(cmdSignal)) {
+        throw new Error('signal "' + signal + '" is not supported by process.kill()');
+    }
+    
+    pid = Number(pid);
+    cmd = 'kill -' + cmdSignal + ' ' + pid;
+    result = SystemWorker.exec(cmd).output.toString();
+};
