@@ -20,8 +20,11 @@ function createContext() {
 function runInContext() {
 }
 
-function runInThisContext() {
+function runInThisContext(source, filename, flag) {
+    return eval(source);
 }
 
 function runInNewContext() {
 }
+
+NodeScript.runInThisContext = runInThisContext;
