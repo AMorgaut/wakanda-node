@@ -17,6 +17,9 @@ LIB_NODE = Folder(ROOT + 'node/lib/');
  * @param {File} file
  **/
 function addSourceGetter(file) {
+    if (file.extension !== 'js') {
+        return;
+    }
     Object.defineProperty(exports, file.nameNoExt, {
         get: function () {
             return loadText(file.path);
