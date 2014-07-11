@@ -1,0 +1,1 @@
+﻿function Timer() {}Timer.prototype.start = function start(msecs, zero) {};Timer.prototype.close = function close() {};module.exports = Timer;

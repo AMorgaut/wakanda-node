@@ -109,6 +109,7 @@ exports.getCPUs = function getCPUs() {
     return getHw().CPUs.map(function (current) {
         // TODO
         // should provide different values in "times" for each CPU
+        // values should match node.js results
         current.times.user = iostat[3];
         current.times.sys = iostat[4];
         current.times.idle = iostat[5];
