@@ -1,1 +1,5 @@
-﻿exports.setFastBufferConstructor = setFastBufferConstructorfunction setFastBufferConstructor(buffer) {}
+﻿exports.setFastBufferConstructor = setFastBufferConstructor
+
+
+function setFastBufferConstructor(buffer) {
+}
